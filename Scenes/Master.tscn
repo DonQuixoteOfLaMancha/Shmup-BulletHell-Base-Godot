@@ -1,0 +1,70 @@
+[gd_scene load_steps=5 format=3 uid="uid://c38r8crm7ium6"]
+
+[ext_resource type="PackedScene" uid="uid://bca5bunrwo2wh" path="res://Scenes/UI.tscn" id="1_y5p4l"]
+[ext_resource type="PackedScene" uid="uid://cbnt7gei3inq2" path="res://Scenes/Menu.tscn" id="2_g5mqr"]
+[ext_resource type="PackedScene" uid="uid://4fyg23i0gusw" path="res://Scenes/Playfield.tscn" id="3_dw77h"]
+
+[sub_resource type="GDScript" id="GDScript_m3xvb"]
+resource_name = "Master"
+script/source = "extends Control
+
+#Variables
+var Score : int = 0;
+
+
+
+# Called when the node enters the scene tree for the first time.
+func _ready() -> void:
+	pass # Replace with function body.
+
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+func _process(delta: float) -> void:
+	pass
+
+#sourced from godot documentation
+func _unhandled_input(event):
+	if event is InputEventKey:
+		if event.pressed and event.keycode == KEY_ESCAPE:
+			get_tree().quit()
+"
+
+[node name="Master" type="Control"]
+layout_mode = 3
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -576.0
+offset_top = -512.0
+offset_right = 576.0
+offset_bottom = 512.0
+grow_horizontal = 2
+grow_vertical = 2
+script = SubResource("GDScript_m3xvb")
+
+[node name="UI" parent="." instance=ExtResource("1_y5p4l")]
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = -384.0
+offset_top = -512.0
+offset_right = 0.0
+offset_bottom = 512.0
+grow_horizontal = 0
+
+[node name="Menu" parent="." instance=ExtResource("2_g5mqr")]
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_right = 0.0
+anchor_bottom = 0.5
+offset_top = -512.0
+offset_right = 768.0
+offset_bottom = 512.0
+grow_horizontal = 1
+
+[node name="Playfield" parent="." instance=ExtResource("3_dw77h")]

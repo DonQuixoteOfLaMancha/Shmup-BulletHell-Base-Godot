@@ -1,0 +1,33 @@
+[gd_scene load_steps=2 format=3 uid="uid://4fyg23i0gusw"]
+
+[sub_resource type="GDScript" id="GDScript_ppdts"]
+resource_name = "Playfield"
+script/source = "extends Node2D
+
+
+#Variables
+var enemy_list = [[]]
+var enemy_positions = [[[0,0]]]
+var enemy_spawn_delays = []
+
+#Constants
+
+const oog : HostileObject = HostileObject.new()
+
+# Called when the node enters the scene tree for the first time.
+func _ready() -> void:
+	pass # Replace with function body.
+
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+func _process(delta: float) -> void:
+	pass
+"
+
+[node name="Playfield" type="Node2D"]
+script = SubResource("GDScript_ppdts")
+
+[node name="Line2D" type="Line2D" parent="."]
+points = PackedVector2Array(5, 5, 763, 5, 763, 1019, 5, 1019)
+closed = true
+default_color = Color(0.627451, 0.627451, 0.627451, 1)

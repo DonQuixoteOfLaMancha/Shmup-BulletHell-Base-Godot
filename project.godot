@@ -1,0 +1,29 @@
+config_version=5
+
+[application]
+
+config/name="Shmup/Bullet Hell Base"
+run/main_scene="res://Scenes/Master.tscn"
+config/features=PackedStringArray("4.3", "GL Compatibility")
+config/icon="res://icon.svg"
+
+[autoload]
+
+Global="*res://Scripts/Global.gd"
+
+[display]
+
+window/size/viewport_height=1024
+window/size/resizable=false
+window/size/borderless=true
+window/stretch/mode="canvas_items"
+window/stretch/aspect="ignore"
+
+[dotnet]
+
+project/assembly_name="AoT Shmup"
+
+[rendering]
+
+renderer/rendering_method="gl_compatibility"
+renderer/rendering_method.mobile="gl_compatibility"

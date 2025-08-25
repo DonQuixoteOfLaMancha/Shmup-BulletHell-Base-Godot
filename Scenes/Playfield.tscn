@@ -1,0 +1,95 @@
+[gd_scene load_steps=3 format=3 uid="uid://4fyg23i0gusw"]
+
+[sub_resource type="GDScript" id="GDScript_ppdts"]
+resource_name = "Playfield"
+script/source = "extends Node2D
+
+
+#Variables
+var enemy_spawn_index : int = 0
+var enemy_spawn_timer : float = 0.0 #time until next enemy spawn
+
+#Constants
+
+
+# Called when the node enters the scene tree for the first time.
+func _ready() -> void:
+	pass # Replace with function body.
+
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+func _process(delta: float) -> void:
+	if(Global.game_state != 1):
+		return
+	
+	#Enemy wave spawning
+	if(enemy_spawn_index < Global.spawn_list.size() and enemy_spawn_index < Global.spawn_delays.size()):
+		enemy_spawn_timer -= delta
+		if(enemy_spawn_timer <= 0.5*delta):
+			for spawn_index in range (0,Global.spawn_list[enemy_spawn_index].size()): #spawns the wave
+				var spawn_entity_pos_x = Global.spawn_list[enemy_spawn_index].entity_Global.spawn_list[spawn_index].spawn_position[0]
+				var spawn_entity_pos_y = Global.spawn_list[enemy_spawn_index].entity_Global.spawn_list[spawn_index].spawn_position[1]
+				var spawn_entity : GameEntity = Global.spawn_list[enemy_spawn_index].entity_Global.spawn_list[spawn_index].spawn_entity.new(spawn_entity_pos_x, spawn_entity_pos_y)
+				get_child(0).add_child(spawn_entity)
+				
+				enemy_spawn_timer = Global.spawn_delays[enemy_spawn_index]
+				#increment the firing index
+				enemy_spawn_index += 1
+"
+
+[sub_resource type="GDScript" id="GDScript_s3ngo"]
+resource_name = "GameEntityCollisionManager"
+script/source = "extends Node2D
+
+
+# Called when the node enters the scene tree for the first time.
+func _ready() -> void:
+	pass # Replace with function body.
+
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+func _process(delta: float) -> void:
+	for collision_index_one in range(0,get_child_count()):
+		var collision_entity_one : GameEntity = get_child(collision_index_one)
+		var collision_entity_one_upper_bound : float = collision_entity_one.position.y - collision_entity_one.collision_size_y #calculate all the collision bounds for entity one
+		var collision_entity_one_lower_bound : float = collision_entity_one.position.y + collision_entity_one.collision_size_y
+		var collision_entity_one_left_bound : float = collision_entity_one.position.x - collision_entity_one.collision_size_x
+		var collision_entity_one_right_bound : float = collision_entity_one.position.x + collision_entity_one.collision_size_x
+		
+		for collision_index_two in range(0,get_child_count()):
+			var collision_entity_two : GameEntity = get_child(collision_index_two)
+			var collision_entity_two_upper_bound : float = collision_entity_two.position.y - collision_entity_two.collision_size_y
+			var collision_entity_two_lower_bound : float = collision_entity_two.position.y + collision_entity_two.collision_size_y
+			var collision_entity_two_left_bound : float = collision_entity_two.position.x - collision_entity_two.collision_size_x
+			var collision_entity_two_right_bound : float = collision_entity_two.position.x + collision_entity_two.collision_size_x
+			
+			if(!collision_entity_one.collided_entities.has(collision_entity_two) and !collision_entity_two.collided_entities.has(collision_entity_one) #checks the two have not already collided
+			
+				and (collision_entity_one.collision_team != collision_entity_two.collision_team #checks that the two aren't on the same team
+					or collision_entity_one.collide_with_own_team or collision_entity_two.collide_with_own_team) #or that they have friendly fire on
+				
+				and (!(collision_entity_one.is_a_bullet or collision_entity_two.is_a_bullet) #checks that neither are bullets
+					or (collision_entity_one.is_a_bullet and collision_entity_two.collide_with_bullets) #or if one is a bullet, the other collides with bullets
+					or (collision_entity_two.is_a_bullet and collision_entity_one.collide_with_bullets)) #(if both are bullets, then just one needs to have bullet collision enabled)
+				
+				and (collision_entity_one_lower_bound > collision_entity_two_upper_bound and collision_entity_one_upper_bound < collision_entity_two_lower_bound) #vertical collision check
+				and (collision_entity_one_right_bound > collision_entity_two_left_bound and collision_entity_one_left_bound < collision_entity_two_right_bound)): #horizontal collision check
+				#Check ends here
+				#Damage both by other's damage value
+				collision_entity_one._damage(collision_entity_two.damage)
+				collision_entity_two._damage(collision_entity_one.damage)
+				#Add both to the other's collided list
+				collision_entity_one.collided_entities.append(collision_entity_two)
+				collision_entity_two.collided_entities.append(collision_entity_one)
+"
+
+[node name="Playfield" type="Node2D"]
+script = SubResource("GDScript_ppdts")
+
+[node name="GameEntityCollisionManager" type="Node2D" parent="."]
+script = SubResource("GDScript_s3ngo")
+
+[node name="Line2D" type="Line2D" parent="."]
+points = PackedVector2Array(5, 5, 763, 5, 763, 1019, 5, 1019)
+closed = true
+default_color = Color(0.627451, 0.627451, 0.627451, 1)

@@ -1,0 +1,89 @@
+[gd_scene load_steps=3 format=3 uid="uid://bca5bunrwo2wh"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_w4sk0"]
+bg_color = Color(0.377919, 0.377919, 0.377919, 1)
+border_width_left = 16
+border_width_top = 16
+border_width_right = 16
+border_width_bottom = 16
+border_color = Color(0.625597, 0.625597, 0.625597, 1)
+border_blend = true
+
+[sub_resource type="GDScript" id="GDScript_y6l1h"]
+resource_name = "UIManager"
+script/source = "extends Panel
+
+
+# Called when the node enters the scene tree for the first time.
+func _ready() -> void:
+	Global.ui = self
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+func _process(delta: float) -> void:
+	get_child(2).text = str(1/delta)
+
+func _update_score() -> void:
+	get_child(0).text = \"Score:%\" % str(Global.score)
+
+func _update_health() -> void:
+	get_child(1).text = \"Health:%\" % str(Global.player_health)
+"
+
+[node name="UI" type="Panel"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = -768.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_w4sk0")
+script = SubResource("GDScript_y6l1h")
+
+[node name="Score" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.1
+anchor_top = 0.09
+anchor_right = 0.9
+anchor_bottom = 0.16
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_font_sizes/font_size = 48
+text = "Score:999999"
+horizontal_alignment = 1
+vertical_alignment = 2
+text_overrun_behavior = 1
+
+[node name="Health" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.1
+anchor_top = 0.2
+anchor_right = 0.9
+anchor_bottom = 0.28
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_font_sizes/font_size = 52
+text = "Health:9999"
+horizontal_alignment = 1
+vertical_alignment = 2
+clip_text = true
+text_overrun_behavior = 1
+
+[node name="FPS" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.69
+anchor_top = 0.91
+anchor_right = 0.94
+anchor_bottom = 0.99
+offset_left = -5.76001
+offset_top = 4.10077
+offset_right = -5.76001
+offset_bottom = 4.10077
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_font_sizes/font_size = 56
+text = "144"
+horizontal_alignment = 1
+vertical_alignment = 2

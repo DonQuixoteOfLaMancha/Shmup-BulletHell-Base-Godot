@@ -1,0 +1,244 @@
+[gd_scene load_steps=10 format=3 uid="uid://cbnt7gei3inq2"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_wo1mv"]
+bg_color = Color(0.377919, 0.377919, 0.377919, 1)
+border_width_left = 16
+border_width_top = 16
+border_width_right = 16
+border_width_bottom = 16
+border_color = Color(0.625597, 0.625597, 0.625597, 1)
+border_blend = true
+
+[sub_resource type="GDScript" id="GDScript_wbc4x"]
+resource_name = "Menu"
+script/source = "extends Panel
+
+
+#Variables
+var screen_res_index = 1;
+
+
+# Called when the node enters the scene tree for the first time.
+func _ready() -> void:
+	_change_res_pressed(0)
+
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+func _process(delta: float) -> void:
+	pass # Replace with function body.
+
+
+func _change_level_pressed(direction: int) -> void:
+	if(Global.level_index+direction >= 0 and Global.level_index + direction < Global.levels.size()):
+		Global.level_index += direction
+		get_child(0).get_child(0).text = Global.levels[Global.level_index].name
+
+func _change_res_pressed(direction: int) -> void:
+	if(screen_res_index+direction >= 0 and screen_res_index + direction < Global.screen_resolutions.size()):
+		screen_res_index += direction
+		get_child(1).get_child(0).text = \"%sx%s\" % Global.screen_resolutions[screen_res_index]
+		get_window().size = Vector2i(Global.screen_resolutions[screen_res_index][0], Global.screen_resolutions[screen_res_index][1])
+
+
+func _begin_pressed() -> void:
+	Global.game_state = 1
+	hide()
+"
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_k8d6v"]
+bg_color = Color(0.439216, 0.439216, 0.439216, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.25098, 0.25098, 0.25098, 1)
+border_blend = true
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+
+[sub_resource type="Theme" id="Theme_6ib7j"]
+Label/font_sizes/font_size = 30
+Label/styles/normal = SubResource("StyleBoxFlat_k8d6v")
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_wmukj"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_niyo0"]
+
+[sub_resource type="SystemFont" id="SystemFont_ftflw"]
+font_names = PackedStringArray("Serif")
+subpixel_positioning = 0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ebtxp"]
+bg_color = Color(0.439216, 0.439216, 0.439216, 1)
+border_width_left = 6
+border_width_top = 6
+border_width_right = 6
+border_width_bottom = 6
+border_color = Color(0.25098, 0.25098, 0.25098, 1)
+border_blend = true
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="Theme" id="Theme_khvhp"]
+default_base_scale = 2.0
+default_font_size = 100
+Button/fonts/font = SubResource("SystemFont_ftflw")
+Button/styles/normal = SubResource("StyleBoxFlat_ebtxp")
+
+[node name="Menu" type="Panel"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = -384.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_wo1mv")
+script = SubResource("GDScript_wbc4x")
+
+[node name="LevelSelection" type="Control" parent="."]
+layout_mode = 1
+anchor_left = 0.5
+anchor_top = 0.46
+anchor_right = 0.5
+anchor_bottom = 0.46
+offset_left = -180.0
+offset_top = -20.0
+offset_right = 180.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Label" type="Label" parent="LevelSelection"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -70.0
+offset_top = -25.0
+offset_right = 70.0
+offset_bottom = 25.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = SubResource("Theme_6ib7j")
+text = "Level Name"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ButtonLeft" type="Button" parent="LevelSelection/Label"]
+layout_mode = 1
+anchors_preset = -1
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = -40.0
+offset_top = -40.0
+offset_bottom = 40.0
+grow_vertical = 2
+theme_override_font_sizes/font_size = 50
+theme_override_styles/focus = SubResource("StyleBoxEmpty_wmukj")
+text = "<"
+flat = true
+
+[node name="ButtonRight" type="Button" parent="LevelSelection/Label"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_top = -40.0
+offset_right = 40.0
+offset_bottom = 40.0
+grow_vertical = 2
+theme_override_font_sizes/font_size = 50
+theme_override_styles/focus = SubResource("StyleBoxEmpty_niyo0")
+text = ">"
+flat = true
+
+[node name="ResControl" type="Control" parent="."]
+layout_mode = 1
+anchor_left = 0.5
+anchor_top = 0.6
+anchor_right = 0.5
+anchor_bottom = 0.6
+offset_left = -180.0
+offset_top = -20.0
+offset_right = 180.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Label" type="Label" parent="ResControl"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -70.0
+offset_top = -25.0
+offset_right = 70.0
+offset_bottom = 25.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = SubResource("Theme_6ib7j")
+text = "768x1024"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ButtonLeft" type="Button" parent="ResControl/Label"]
+layout_mode = 1
+anchors_preset = -1
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = -40.0
+offset_top = -40.0
+offset_bottom = 40.0
+grow_vertical = 2
+theme_override_font_sizes/font_size = 50
+theme_override_styles/focus = SubResource("StyleBoxEmpty_wmukj")
+text = "<"
+flat = true
+
+[node name="ButtonRight" type="Button" parent="ResControl/Label"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_top = -40.0
+offset_right = 40.0
+offset_bottom = 40.0
+grow_vertical = 2
+theme_override_font_sizes/font_size = 50
+theme_override_styles/focus = SubResource("StyleBoxEmpty_niyo0")
+text = ">"
+flat = true
+
+[node name="ButtonBegin" type="Button" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 0.8
+anchor_right = 0.5
+anchor_bottom = 0.8
+offset_left = -160.0
+offset_top = -70.0
+offset_right = 160.0
+offset_bottom = 70.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = SubResource("Theme_khvhp")
+text = "BEGIN"
+
+[connection signal="pressed" from="LevelSelection/Label/ButtonLeft" to="." method="_change_level_pressed" binds= [-1]]
+[connection signal="pressed" from="LevelSelection/Label/ButtonRight" to="." method="_change_level_pressed" binds= [1]]
+[connection signal="pressed" from="ResControl/Label/ButtonLeft" to="." method="_change_res_pressed" binds= [-1]]
+[connection signal="pressed" from="ResControl/Label/ButtonRight" to="." method="_change_res_pressed" binds= [1]]
+[connection signal="pressed" from="ButtonBegin" to="." method="_begin_pressed"]
