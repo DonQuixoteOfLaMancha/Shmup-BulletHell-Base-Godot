@@ -1,0 +1,12 @@
+res://Scenes/Menu.tscn
+res://Scripts/GameEntity.gd
+res://Scenes/Playfield.tscn
+res://Scripts/Global.gd
+res://Scripts/PlayerEntity.gd
+res://Scenes/Master.tscn
+res://Scenes/UI.tscn
+res://Scripts/Bullet.gd
+res://Scripts/Enemy.gd
+res://Scripts/EntitySpawnWave.gd
+res://Scripts/Level.gd
+res://Scripts/GameEntitySpawn.gd

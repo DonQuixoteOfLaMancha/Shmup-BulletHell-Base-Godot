@@ -1,3 +1,3 @@
 class_name EntitySpawnWave
 
-const entity_spawn_list : Array[GameEntitySpawn] = []
+var entity_spawn_list : Array[GameEntitySpawn] = [] #GameEntitySpawn.new(<EntityType>, [<SpawnPosX>, <SpawnPosY>]

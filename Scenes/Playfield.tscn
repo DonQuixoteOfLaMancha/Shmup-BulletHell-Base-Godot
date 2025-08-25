@@ -26,10 +26,10 @@ func _process(delta: float) -> void:
 	if(enemy_spawn_index < Global.spawn_list.size() and enemy_spawn_index < Global.spawn_delays.size()):
 		enemy_spawn_timer -= delta
 		if(enemy_spawn_timer <= 0.5*delta):
-			for spawn_index in range (0,Global.spawn_list[enemy_spawn_index].size()): #spawns the wave
-				var spawn_entity_pos_x = Global.spawn_list[enemy_spawn_index].entity_Global.spawn_list[spawn_index].spawn_position[0]
-				var spawn_entity_pos_y = Global.spawn_list[enemy_spawn_index].entity_Global.spawn_list[spawn_index].spawn_position[1]
-				var spawn_entity : GameEntity = Global.spawn_list[enemy_spawn_index].entity_Global.spawn_list[spawn_index].spawn_entity.new(spawn_entity_pos_x, spawn_entity_pos_y)
+			for spawn_index in range (0,Global.spawn_list[enemy_spawn_index].entity_spawn_list.size()): #spawns the wave
+				var spawn_entity_pos_x = Global.spawn_list[enemy_spawn_index].entity_spawn_list[spawn_index].spawn_position[0]
+				var spawn_entity_pos_y = Global.spawn_list[enemy_spawn_index].entity_spawn_list[spawn_index].spawn_position[1]
+				var spawn_entity : GameEntity = Global.spawn_list[enemy_spawn_index].entity_spawn_list[spawn_index].spawn_entity.new(spawn_entity_pos_x, spawn_entity_pos_y)
 				get_child(0).add_child(spawn_entity)
 				
 				enemy_spawn_timer = Global.spawn_delays[enemy_spawn_index]

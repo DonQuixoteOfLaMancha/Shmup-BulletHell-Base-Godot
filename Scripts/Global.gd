@@ -4,6 +4,9 @@ extends Node
 var player : GameEntity = null
 var ui = null
 
+var player_chars = [] #List of playerentity classes for the player that they can switch between
+var player_char_index : int = 0
+
 var game_state : int = 0 #0 is menu, 1 is playing
 var player_health : #used for interacting with player health
 	set(value):
@@ -16,6 +19,7 @@ var player_health : #used for interacting with player health
 			return player.health
 		else:
 			return 0.0
+
 var score : int = 0 :
 	set(value):
 		score = value
@@ -24,9 +28,11 @@ var score : int = 0 :
 	get:
 		return score
 
-var levels : Array[Level] = [] #List of available levels
+
+var levels = [] #List of available levels
 var level_index : int = 0 #Index of selected level from levels
-var spawn_list : Array[EntitySpawnWave] : #Returns the list of spawn waves
+
+var spawn_list = [] : #Returns the list of spawn waves
 	get:
 		if(level_index<levels.size()):
 			return levels[level_index].spawn_waves

@@ -47,7 +47,7 @@ var damage : float = 0.0 #how much damage the object will deal to something it c
 
 var score_value : int = 0 #how much score is gained upon the entity's death
 
-var fire_pattern : Array[EntitySpawnWave] = []
+var fire_pattern = [] #List of EntitySpawnWave types
 var fire_cooldowns : Array[float] = []
 
 var collision_team : int = 0 #0 for player, 1 for enemy
@@ -121,8 +121,8 @@ func _process(delta: float) -> void:
 	velocity_y += delta*acceleration_y
 	
 	#Despawning after too long out of bounds
-	if(position.x < 0 or position.x > Global.screen_bounds[0] #Checks if object is within horizontal bounds
-		or position.y < -0.5*Global.screen_bounds[1] or position.y > Global.screen_bounds[1]): #Checks if object is within vertical bounds, gives space above the visible area equal to 1/2 of the play area's height that is considered in bounds for spawning purposes
+	if(position.x+collision_size_x < 0 or position.x-collision_size_x > Global.screen_bounds[0] #Checks if object is within horizontal bounds
+		or position.y+collision_size_y < -0.5*Global.screen_bounds[1] or position.y-collision_size_y > Global.screen_bounds[1]): #Checks if object is within vertical bounds, gives space above the visible area equal to 1/2 of the play area's height that is considered in bounds for spawning purposes
 			oob_time_passed += delta
 			if(oob_time_passed > oob_time_limit and oob_time_limit >= 0):
 				if(!is_a_bullet && collision_team == 1 && position.y > Global.screen_bounds[1]): #Damages player if a non-bullet enemy gets past
@@ -147,7 +147,7 @@ func _process(delta: float) -> void:
 				var spawn_entity_pos_x = fire_pattern[firing_index].entity_spawn_list[spawn_index].spawn_position[0]
 				var spawn_entity_pos_y = fire_pattern[firing_index].entity_spawn_list[spawn_index].spawn_position[1]
 				var spawn_entity : GameEntity = fire_pattern[firing_index].entity_spawn_list[spawn_index].spawn_entity.new(spawn_entity_pos_x+position.x, spawn_entity_pos_y+position.y , self)
-				get_parent().add_child(spawn_entity)
+				add_sibling(spawn_entity)
 			
 			firing_cooldown = fire_cooldowns[firing_index]
 			#increment the firing index, or loop back around (if looping is enabled)
