@@ -102,12 +102,8 @@ func _process(delta: float) -> void:
 			
 			#Graze check
 			elif(collision_entity_one is PlayerEntity #Checks that CE1 is player
-			
 					and (collision_entity_two.collision_team == 1 or collision_entity_two.collide_with_own_team) #Checks that CE2 can harm player
-					
-					and (collision_entity_one_lower_bound+Global.graze_distance >= collision_entity_two_upper_bound and collision_entity_one_upper_bound-Global.graze_distance <= collision_entity_two_lower_bound) #vertical dist check
-					and (collision_entity_one_right_bound+Global.graze_distance >= collision_entity_two_left_bound and collision_entity_one_left_bound-Global.graze_distance <= collision_entity_two_right_bound)): #horizontal dist check):
-						Global.score += delta*Global.graze_score_increment
+					and ):
 "
 
 [node name="Playfield" type="Node2D"]

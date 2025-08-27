@@ -1,6 +1,8 @@
 AnimatedSprite2D
-Panel
+Sprite2D
 GameEntity
+AnimationPlayer
+Panel
 Node2D
 Label
 Line2D

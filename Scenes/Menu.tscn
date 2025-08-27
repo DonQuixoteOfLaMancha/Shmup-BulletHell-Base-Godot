@@ -21,6 +21,7 @@ var screen_res_index = 1;
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	_change_res_pressed(0)
+	_change_level_pressed(0)
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -41,8 +42,8 @@ func _change_res_pressed(direction: int) -> void:
 
 
 func _begin_pressed() -> void:
-	Global.game_state = 1
-	hide()
+	if(Global._begin_stage()):
+		hide()
 "
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_k8d6v"]

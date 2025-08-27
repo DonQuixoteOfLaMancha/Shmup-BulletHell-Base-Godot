@@ -42,7 +42,7 @@ func _init(initial_position_x: float = 0.0, initial_position_y: float = 0.0, sou
 			position.y = swap_target_y
 	
 	oob_time_limit = -1
-	initial_health = 100
+	health = Global.player_health
 
 func _ready() -> void:
 	super()
@@ -53,8 +53,34 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	super(delta)
 	
+	#Reset velocity for when keys not pressed
 	velocity_x = 0
 	velocity_y = 0
+	
+	#Input handling
+	if(swap_timer <= 0):
+		if Input.is_action_pressed("move_right"):
+			velocity_x += move_speed
+		if Input.is_action_pressed("move_left"):
+			velocity_x -= move_speed
+		if Input.is_action_pressed("move_down") and vertical_movement:
+			velocity_y += move_speed
+		if Input.is_action_pressed("move_up") and vertical_movement:
+			velocity_y -= move_speed
+		if Input.is_action_pressed("fire"):
+			_fire()
+	
+	
+	#Keeps the player in bounds
+	if(position.x-collision_size_x < 0):
+		position.x = collision_size_x
+	elif(position.x+collision_size_x > Global.screen_bounds[0]):
+		position.x = Global.screen_bounds[0]-collision_size_x
+	if(position.y-collision_size_y < 0):
+		position.y = collision_size_y
+	elif(position.y+collision_size_y > Global.screen_bounds[1]):
+		position.y = Global.screen_bounds[1]-collision_size_y
+	
 	
 	#Fire rate limit
 	if(fire_cooldown > 0):
@@ -73,19 +99,12 @@ func _process(delta: float) -> void:
 				swapping_in = false
 			else:
 				add_sibling(Global.player_chars[Global.player_char_index].new(position.x, position.y, null, true, swap_start_x, swap_start_y))
+				get_parent().move_child(get_parent().get_child(get_parent().get_child_count()-1), 0)
 				queue_free()
 
 func _unhandled_input(event): #Handling movement, fire, and switch controls
 	if(swap_timer <= 0):
 		if event is InputEventKey: 
-			if event.pressed and event.keycode == KEY_LEFT:
-				velocity_x = -move_speed
-			if event.pressed and event.keycode == KEY_RIGHT:
-				velocity_x = move_speed
-			if event.pressed and event.keycode == KEY_UP && vertical_movement:
-				velocity_y = -move_speed
-			if event.pressed and event.keycode == KEY_DOWN && vertical_movement:
-				velocity_y = move_speed
 			if event.pressed and event.keycode in [KEY_1,KEY_2,KEY_3,KEY_4,KEY_5,KEY_6,KEY_7,KEY_8,KEY_9]:
 				if(int(OS.get_keycode_string(event.keycode)) <= Global.player_chars.size() and int(OS.get_keycode_string(event.keycode)) != Global.player_char_index): #Code for swapping out to another type
 					swapping_in = false
@@ -98,16 +117,18 @@ func _unhandled_input(event): #Handling movement, fire, and switch controls
 					if(swap_timer <= 0):
 						add_sibling(Global.player_chars[Global.player_char_index].new(position.x, position.y, null, true, swap_start_x, swap_start_y))
 						queue_free()
-		elif event is InputEventMouseButton:
-			if event.pressed and event.button_index == 1:
-				_fire()
 
 
 func _fire():
 	if(fire_cooldown <= 0):
-		for spawn_index in range (0,bullet_type.entity_spawn_list.size()): #spawns the bullet(s)
-			var spawn_entity_pos_x = bullet_type.entity_spawn_list[spawn_index].spawn_position[0]
-			var spawn_entity_pos_y = bullet_type.entity_spawn_list[spawn_index].spawn_position[1]
-			var spawn_entity : GameEntity = bullet_type.entity_spawn_list[spawn_index].spawn_entity.new(spawn_entity_pos_x+position.x, spawn_entity_pos_y+position.y , self)
-			add_sibling(spawn_entity)
+		if(bullet_type != null):
+			for spawn_index in range (0,bullet_type.entity_spawn_list.size()): #spawns the bullet(s)
+				var spawn_entity_pos_x = bullet_type.entity_spawn_list[spawn_index].spawn_position[0]
+				var spawn_entity_pos_y = bullet_type.entity_spawn_list[spawn_index].spawn_position[1]
+				var spawn_entity : GameEntity = bullet_type.entity_spawn_list[spawn_index].spawn_entity.new(spawn_entity_pos_x+position.x, spawn_entity_pos_y+position.y , self)
+				add_sibling(spawn_entity)
 		fire_cooldown = fire_delay
+
+func _damage(damage_amount: float):
+	super(damage_amount)
+	Global.player_health = health

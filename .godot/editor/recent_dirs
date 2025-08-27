@@ -1,2 +1,8 @@
+res://Assets/CharacterSprites/SpriteFrames
+res://Assets/CharacterSprites/Spritesheets
+res://Scripts/SpecificInstances/PlayerChars
+res://Scripts/SpecificInstances/Enemies
+res://Scripts/SpecificInstances/Levels
+res://
 res://Scripts
 res://Scenes
