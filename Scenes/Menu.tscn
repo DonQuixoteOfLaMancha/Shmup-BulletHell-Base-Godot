@@ -26,7 +26,8 @@ func _ready() -> void:
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
-	pass # Replace with function body.
+	if(Global.game_state == 0 and !visible):
+		show()
 
 
 func _change_level_pressed(direction: int) -> void:
@@ -67,11 +68,11 @@ Label/styles/normal = SubResource("StyleBoxFlat_k8d6v")
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_niyo0"]
 
-[sub_resource type="SystemFont" id="SystemFont_ftflw"]
+[sub_resource type="SystemFont" id="SystemFont_clah8"]
 font_names = PackedStringArray("Serif")
 subpixel_positioning = 0
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ebtxp"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_o2wse"]
 bg_color = Color(0.439216, 0.439216, 0.439216, 1)
 border_width_left = 6
 border_width_top = 6
@@ -87,8 +88,8 @@ corner_radius_bottom_left = 10
 [sub_resource type="Theme" id="Theme_khvhp"]
 default_base_scale = 2.0
 default_font_size = 100
-Button/fonts/font = SubResource("SystemFont_ftflw")
-Button/styles/normal = SubResource("StyleBoxFlat_ebtxp")
+Button/fonts/font = SubResource("SystemFont_clah8")
+Button/styles/normal = SubResource("StyleBoxFlat_o2wse")
 
 [node name="Menu" type="Panel"]
 anchors_preset = 15

@@ -26,7 +26,7 @@ func _update_score() -> void:
 	get_child(0).text = \"Score:%s\" % str(roundi(Global.score))
 
 func _update_health() -> void:
-	get_child(1).text = \"Health:%s\" % str(Global.player_health)
+	get_child(1).text = \"Health:%s\" % str(maxi(0,Global.player_health))
 "
 
 [node name="UI" type="Panel"]

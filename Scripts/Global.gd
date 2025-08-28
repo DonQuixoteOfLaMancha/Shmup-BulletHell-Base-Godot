@@ -9,7 +9,7 @@ var player_chars = [TestPlayerChar] #List of playerentity classes for the player
 var player_char_index : int = 0
 
 
-var game_state : int = 0 #0 is menu, 1 is playing
+var game_state : int = 0 #0 is menu, 1 is playing, 2 is in the post-stage screen
 var player_health : #used for interacting with player health
 	set(value):
 		if(player != null):
@@ -52,7 +52,7 @@ const screen_resolutions = [[720,640],[1152,1024]] #Valid screen resolutions sel
 const screen_bounds : Array[int] = [768, 1024] #This must be changed if you change the size of the play area, unrelated to window size
 const player_start_position = Vector2(384,920) #Player position when starting a stage
 const initial_player_health : float = 100
-const graze_score_increment : float = 1 #How much score the player gains per second grazing an enemy or bullet
+const graze_score_increment : float = 10 #How much score the player gains per second grazing an enemy or bullet
 const graze_distance : float = 50 #How close the player needs to be to gain graze score
 
 

@@ -7,7 +7,7 @@ func _init(initial_position_x: float = 0.0, initial_position_y: float = 0.0, sou
 	super(initial_position_x, initial_position_y, source_entity,
 			switching_places, switch_target_pos_x, switch_target_pos_y)
 	
-	move_speed = 400
+	move_speed = 200
 	fire_delay = 5
 	spritesheet = null
 	sprite = preload("res://icon.svg")

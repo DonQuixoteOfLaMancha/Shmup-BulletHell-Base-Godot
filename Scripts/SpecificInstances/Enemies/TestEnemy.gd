@@ -10,4 +10,4 @@ func _init(initial_position_x: float = 0.0, initial_position_y: float = 0.0, sou
 	collision_size_x = 50
 	collision_size_y = 50
 	score_value = 10
-	damage = 5
+	damage = 1000
