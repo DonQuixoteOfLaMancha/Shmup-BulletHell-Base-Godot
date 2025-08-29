@@ -66,7 +66,7 @@ var damage : float = 0.0 #how much damage the object will deal to something it c
 
 var score_value : int = 0 #how much score is gained upon the entity's death
 
-var fire_pattern = [] #List of EntitySpawnWave types
+var fire_pattern : Array[EntitySpawnWave] = [] #List of EntitySpawnWaves
 var fire_cooldowns : Array[float] = []
 
 var collision_team : int = 0 #0 for player, 1 for enemy
@@ -198,29 +198,40 @@ func _process(delta: float) -> void:
 	#Firing bullets according to pattern
 	if(fire_pattern.size() > 0 and fire_cooldowns.size() > 0 #checks there actually is any firing pattern
 		and firing_index < fire_pattern.size() and firing_index < fire_cooldowns.size()): #checks that the index is in range (it will go out of range if runs out of loops)
-		firing_cooldown -= delta
-		if(firing_cooldown <= 0.5*delta):
-			if(spritesheet != null): 
-				if(get_child(0).sprite_frames.get_animation_names.has("fire")): #runs firing animation if one is present
-					get_child(0).play("fire")
-					get_child(0).animation_finished.connect(get_child(0).play("default"))
-					get_child(0).animation_finished.connect(get_child(0).animation_finished.disconnect(get_child(0).play("Default")))
-			
-			
-			for spawn_index in range (0,fire_pattern[firing_index].size()): #spawns the wave
-				var spawn_entity_pos_x = fire_pattern[firing_index].entity_spawn_list[spawn_index].spawn_position[0]
-				var spawn_entity_pos_y = fire_pattern[firing_index].entity_spawn_list[spawn_index].spawn_position[1]
-				var spawn_entity : GameEntity = fire_pattern[firing_index].entity_spawn_list[spawn_index].spawn_entity.new(spawn_entity_pos_x+position.x, spawn_entity_pos_y+position.y , self)
-				add_sibling(spawn_entity)
-			
-			firing_cooldown = fire_cooldowns[firing_index]
-			#increment the firing index, or loop back around (if looping is enabled)
-			if((firing_index < fire_pattern.size() and firing_index < fire_cooldowns.size()) or fire_loop_count == 0):
-				firing_index += 1
-			else: #looping back to start
-				if(fire_loop_count > 0): #decrements amount of loops left if limited
-					fire_loop_count -= 1
-				firing_index = 0
+		if(fire_pattern[firing_index] != null):
+			firing_cooldown -= delta
+			if(firing_cooldown <= 0.5*delta):
+				if(spritesheet != null): 
+					if(get_child(0).sprite_frames.get_animation_names().has("fire")): #runs firing animation if one is present
+						get_child(0).play("fire")
+						if(!get_child(0).animation_finished.is_connected(_fire_anim_finished)):
+							get_child(0).animation_finished.connect(_fire_anim_finished)
+				
+				
+				for spawn_index in range (0,fire_pattern[firing_index].entity_spawn_list.size()): #spawns the wave
+					var spawn_entity_pos_x = fire_pattern[firing_index].entity_spawn_list[spawn_index].spawn_position[0]
+					var spawn_entity_pos_y = fire_pattern[firing_index].entity_spawn_list[spawn_index].spawn_position[1]
+					var spawn_entity : GameEntity = null
+					if(fire_pattern[firing_index].entity_spawn_list[spawn_index].spawn_entity.new().is_a_bullet):
+						var spawn_entity_vel_x = fire_pattern[firing_index].entity_spawn_list[spawn_index].spawn_velocity[0]
+						var spawn_entity_vel_y = fire_pattern[firing_index].entity_spawn_list[spawn_index].spawn_velocity[1]
+						var spawn_entity_acc_x = fire_pattern[firing_index].entity_spawn_list[spawn_index].acceleration[0]
+						var spawn_entity_acc_y = fire_pattern[firing_index].entity_spawn_list[spawn_index].acceleration[1]
+						var spawn_entity_team = fire_pattern[firing_index].entity_spawn_list[spawn_index].spawn_team
+						spawn_entity = fire_pattern[firing_index].entity_spawn_list[spawn_index].spawn_entity.new(spawn_entity_pos_x+position.x, spawn_entity_pos_y+position.y, self, spawn_entity_vel_x, spawn_entity_vel_y, spawn_entity_acc_x, spawn_entity_acc_y, spawn_entity_team)
+					else:
+						spawn_entity = fire_pattern[firing_index].entity_spawn_list[spawn_index].spawn_entity.new(spawn_entity_pos_x+position.x, spawn_entity_pos_y+position.y, self)
+					add_sibling(spawn_entity)
+				
+				firing_cooldown = fire_cooldowns[firing_index]
+				#increment the firing index, or loop back around (if looping is enabled)
+				if((firing_index < fire_pattern.size() and firing_index < fire_cooldowns.size()) or fire_loop_count == 0):
+					firing_index += 1
+				else: #looping back to start
+					if(fire_loop_count > 0): #decrements amount of loops left if limited
+						fire_loop_count -= 1
+					firing_index = 0
+
 
 #Taking damage
 func _damage(damage_amount: float) -> void:
@@ -242,3 +253,8 @@ func _damage(damage_amount: float) -> void:
 		else:
 			queue_free()
 		Global.score += score_value
+
+
+func _fire_anim_finished() -> void:
+	get_child(0).play("default")
+	get_child(0).animation_finished.disconnect(_fire_anim_finished)

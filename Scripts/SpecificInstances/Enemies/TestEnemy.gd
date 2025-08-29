@@ -11,3 +11,5 @@ func _init(initial_position_x: float = 0.0, initial_position_y: float = 0.0, sou
 	collision_size_y = 50
 	score_value = 10
 	damage = 1000
+	fire_pattern = [TestPlayerBulletSpawn.new(), TestPlayerBulletSpawn.new()]
+	fire_cooldowns = [2, 4]

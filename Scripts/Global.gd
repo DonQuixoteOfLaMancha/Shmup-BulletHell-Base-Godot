@@ -56,7 +56,7 @@ var spawn_delays : Array[float] : #Contains delays between each spawn wave
 
 #Constants
 const screen_resolutions = [[720,640],[1152,1024]] #Valid screen resolutions selectable from menu
-const screen_bounds : Array[int] = [768, 1024] #This must be changed if you change the size of the play area, unrelated to window size
+const screen_bounds : Array[float] = [768, 1024] #This must be changed if you change the size of the play area, unrelated to window size
 const player_start_position = Vector2(384,920) #Player position when starting a stage
 const initial_player_health : float = 100
 const graze_score_increment : float = 10 #How much score the player gains per second grazing an enemy or bullet

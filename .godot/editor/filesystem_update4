@@ -1,12 +1,8 @@
-res://Scenes/Playfield.tscn
-res://Assets/CharacterSprites/SpriteFrames/TestFrames.tres
-res://Scripts/SpecificInstances/PlayerChars/TestPlayerChar.gd
-res://Scenes/Master.tscn
 res://Scenes/UI.tscn
+res://Assets/CharacterSprites/SpriteFrames/TestFrames.tres
+res://Scripts/GameEntity.gd
+res://Scripts/SpecificInstances/Enemies/TestEnemy.gd
+res://Scenes/Master.tscn
 res://Scenes/Menu.tscn
-res://Scripts/GameEntitySpawn.gd
-res://Scripts/PlayerEntity.gd
-res://TestBombSpawn.gd
-res://TestPlayerBulletSpawn.gd
-res://Scripts/Bomb.gd
+res://Scenes/Playfield.tscn
 res://Scripts/Global.gd
