@@ -8,6 +8,8 @@ var clear_timer : float = 0.0
 var explosion_img : Texture2D = null
 var explosion_animation : SpriteFrames = null
 
+var blown : bool = false
+
 func _init(initial_position_x: float = 0.0, initial_position_y: float = 0.0, source_entity: GameEntity = null) -> void:
 	super(initial_position_x, initial_position_y, source_entity)
 	
@@ -16,12 +18,13 @@ func _init(initial_position_x: float = 0.0, initial_position_y: float = 0.0, sou
 
 
 func _process(delta: float) -> void:
-	explosion_delay -= delta
-	if(explosion_delay <= 0.5*delta):
-		_explode()
+	if(blown):
 		clear_timer -= delta
 		if(clear_timer <= 0.5*delta && explosion_animation == null):
 			queue_free()
+	explosion_delay -= delta
+	if(explosion_delay <= 0.5*delta and !blown):
+		_explode()
 
 func _explode():
 	get_child(0).queue_free()
@@ -39,6 +42,8 @@ func _explode():
 					anim_sprite2d.play("default")
 					anim_sprite2d.animation_finished.connect(queue_free)
 		add_child(anim_sprite2d)
+	blown = true
 	
 	position = Vector2(Global.screen_bounds[0]/2, Global.screen_bounds[1]/2)
-	scale = Vector2(Global.screen_bounds[0]/2, Global.screen_bounds[1]/2)
+	collision_size_x = Global.screen_bounds[0]/2
+	collision_size_y = Global.screen_bounds[1]/2

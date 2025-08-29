@@ -30,7 +30,16 @@ func _process(delta: float) -> void:
 			for spawn_index in range (0,Global.spawn_list[enemy_spawn_index].entity_spawn_list.size()): #spawns the wave
 				var spawn_entity_pos_x = Global.spawn_list[enemy_spawn_index].entity_spawn_list[spawn_index].spawn_position[0]
 				var spawn_entity_pos_y = Global.spawn_list[enemy_spawn_index].entity_spawn_list[spawn_index].spawn_position[1]
-				var spawn_entity : GameEntity = Global.spawn_list[enemy_spawn_index].entity_spawn_list[spawn_index].spawn_entity.new(spawn_entity_pos_x, spawn_entity_pos_y)
+				var spawn_entity : GameEntity = null
+				if(Global.spawn_list[enemy_spawn_index].entity_spawn_list[spawn_index].spawn_entity.new().is_a_bullet):
+					var spawn_entity_vel_x = Global.spawn_list[enemy_spawn_index].entity_spawn_list[spawn_index].spawn_velocity[0]
+					var spawn_entity_vel_y = Global.spawn_list[enemy_spawn_index].entity_spawn_list[spawn_index].spawn_velocity[1]
+					var spawn_entity_acc_x = Global.spawn_list[enemy_spawn_index].entity_spawn_list[spawn_index].acceleration[0]
+					var spawn_entity_acc_y = Global.spawn_list[enemy_spawn_index].entity_spawn_list[spawn_index].acceleration[1]
+					var spawn_entity_team = Global.spawn_list[enemy_spawn_index].entity_spawn_list[spawn_index].spawn_team
+					spawn_entity = Global.spawn_list[enemy_spawn_index].entity_spawn_list[spawn_index].spawn_entity.new(spawn_entity_pos_x, spawn_entity_pos_y, null, spawn_entity_vel_x, spawn_entity_vel_y, spawn_entity_acc_x, spawn_entity_acc_y, spawn_entity_team)
+				else:
+					spawn_entity = Global.spawn_list[enemy_spawn_index].entity_spawn_list[spawn_index].spawn_entity.new(spawn_entity_pos_x, spawn_entity_pos_y)
 				get_child(0).add_child(spawn_entity)
 			enemy_spawn_timer = Global.spawn_delays[enemy_spawn_index]
 			#increment the firing index
@@ -45,6 +54,7 @@ func _process(delta: float) -> void:
 		_end_stage(false)
 
 func _begin_stage():
+	Global.bombs_used = 0
 	enemy_spawn_index = 0
 	enemy_spawn_timer = 0
 	get_child(2).hide()
@@ -58,6 +68,8 @@ func _begin_stage():
 		get_child(1).scale = Vector2(Global.screen_bounds[0]/Global.levels[Global.level_index].background_img.get_width(), Global.screen_bounds[1]/Global.levels[Global.level_index].background_img.get_height())
 
 func _end_stage(successful : bool):
+	for index in range(0,get_child(0).get_child_count()):
+		get_child(0).get_child(index).queue_free()
 	Global.game_state = 2
 	get_child(2).show()
 	if(successful):
@@ -65,6 +77,7 @@ func _end_stage(successful : bool):
 	else:
 		get_child(2).get_child(0).text = \"Stage Failed\"
 	get_child(2).get_child(1).text = \"Score:%s\" % str(roundi(Global.score))
+	get_child(2).get_child(2).text = \"Bombs Used:%s\" % str(Global.bombs_used)
 
 func _return_menu():
 	Global.game_state = 0
@@ -201,6 +214,21 @@ grow_horizontal = 2
 grow_vertical = 0
 theme_override_font_sizes/font_size = 48
 text = "Score:999999"
+horizontal_alignment = 1
+vertical_alignment = 2
+text_overrun_behavior = 1
+
+[node name="BombsUsed" type="Label" parent="StageEndScreen"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.1
+anchor_top = 0.58
+anchor_right = 0.9
+anchor_bottom = 0.65
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_font_sizes/font_size = 48
+text = "Bombs Used: 0"
 horizontal_alignment = 1
 vertical_alignment = 2
 text_overrun_behavior = 1

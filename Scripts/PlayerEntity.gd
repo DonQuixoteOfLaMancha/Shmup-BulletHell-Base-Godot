@@ -4,6 +4,7 @@ class_name PlayerEntity
 
 #Variables
 var fire_cooldown : float = 0.0
+var bomb_cooldown : float = 0.0
 
 var swap_timer : float = 0.0
 var swap_start_x : float = 0.0
@@ -15,6 +16,9 @@ var swapping_in : bool = false
 #Override Variables
 var bullet_type : EntitySpawnWave = null
 var fire_delay : float = 0.0
+
+var bomb_types : Array[EntitySpawnWave] = []
+var bomb_delay : float = 0.0
 
 var move_speed : float = 0.0 #How fast the character moves when inputted upon
 var vertical_movement : bool = true #Whether the character can move vertically or not (use true for bullet hells, use false for basic shmups)
@@ -82,9 +86,11 @@ func _process(delta: float) -> void:
 		position.y = Global.screen_bounds[1]-collision_size_y
 	
 	
-	#Fire rate limit
+	#Fire rate and bomb rate limit
 	if(fire_cooldown > 0):
 		fire_cooldown -= delta
+	if(bomb_cooldown > 0):
+		bomb_cooldown -= delta
 	
 	#Swapping in and out
 	if(swap_timer > 0):
@@ -117,6 +123,9 @@ func _unhandled_input(event): #Handling movement, fire, and switch controls
 					if(swap_timer <= 0):
 						add_sibling(Global.player_chars[Global.player_char_index].new(position.x, position.y, null, true, swap_start_x, swap_start_y))
 						queue_free()
+	if event is InputEventKey:
+		if event.pressed and event.keycode == KEY_C:
+			_bomb(0)
 
 
 func _fire():
@@ -125,9 +134,38 @@ func _fire():
 			for spawn_index in range (0,bullet_type.entity_spawn_list.size()): #spawns the bullet(s)
 				var spawn_entity_pos_x = bullet_type.entity_spawn_list[spawn_index].spawn_position[0]
 				var spawn_entity_pos_y = bullet_type.entity_spawn_list[spawn_index].spawn_position[1]
-				var spawn_entity : GameEntity = bullet_type.entity_spawn_list[spawn_index].spawn_entity.new(spawn_entity_pos_x+position.x, spawn_entity_pos_y+position.y , self)
+				var spawn_entity : GameEntity = null
+				if(bullet_type.entity_spawn_list[spawn_index].spawn_entity.new().is_a_bullet):
+					var spawn_entity_vel_x = bullet_type.entity_spawn_list[spawn_index].spawn_velocity[0]
+					var spawn_entity_vel_y = bullet_type.entity_spawn_list[spawn_index].spawn_velocity[1]
+					var spawn_entity_acc_x = bullet_type.entity_spawn_list[spawn_index].acceleration[0]
+					var spawn_entity_acc_y = bullet_type.entity_spawn_list[spawn_index].acceleration[1]
+					var spawn_entity_team = bullet_type.entity_spawn_list[spawn_index].spawn_team
+					spawn_entity = bullet_type.entity_spawn_list[spawn_index].spawn_entity.new(spawn_entity_pos_x+position.x, spawn_entity_pos_y+position.y, self, spawn_entity_vel_x, spawn_entity_vel_y, spawn_entity_acc_x, spawn_entity_acc_y, spawn_entity_team)
+				else:
+					spawn_entity = bullet_type.entity_spawn_list[spawn_index].spawn_entity.new(spawn_entity_pos_x+position.x, spawn_entity_pos_y+position.y, self)
 				add_sibling(spawn_entity)
 		fire_cooldown = fire_delay
+
+func _bomb(index : int = 0):
+	if(index < bomb_types.size() && bomb_cooldown <= 0 && Global.bombs_used < Global.max_bombs):
+		if(bomb_types[index] != null):
+			for spawn_index in range (0,bomb_types[index].entity_spawn_list.size()): #spawns the bullet(s)
+				var spawn_entity_pos_x = bomb_types[index].entity_spawn_list[spawn_index].spawn_position[0]
+				var spawn_entity_pos_y = bomb_types[index].entity_spawn_list[spawn_index].spawn_position[1]
+				var spawn_entity : GameEntity = null
+				if(bomb_types[index].entity_spawn_list[spawn_index].spawn_entity.new().is_a_bullet):
+					var spawn_entity_vel_x = bomb_types[index].entity_spawn_list[spawn_index].spawn_velocity[0]
+					var spawn_entity_vel_y = bomb_types[index].entity_spawn_list[spawn_index].spawn_velocity[1]
+					var spawn_entity_acc_x = bomb_types[index].entity_spawn_list[spawn_index].acceleration[0]
+					var spawn_entity_acc_y = bomb_types[index].entity_spawn_list[spawn_index].acceleration[1]
+					var spawn_entity_team = bomb_types[index].entity_spawn_list[spawn_index].team
+					spawn_entity = bomb_types[index].entity_spawn_list[spawn_index].spawn_entity.new(spawn_entity_pos_x+position.x, spawn_entity_pos_y+position.y, self, spawn_entity_vel_x, spawn_entity_vel_y, spawn_entity_acc_x, spawn_entity_acc_y, spawn_entity_team)
+				else:
+					spawn_entity = bomb_types[index].entity_spawn_list[spawn_index].spawn_entity.new(spawn_entity_pos_x+position.x, spawn_entity_pos_y+position.y, self)
+				add_sibling(spawn_entity)
+			Global.bombs_used += 1
+		bomb_cooldown = bomb_delay
 
 func _damage(damage_amount: float):
 	super(damage_amount)

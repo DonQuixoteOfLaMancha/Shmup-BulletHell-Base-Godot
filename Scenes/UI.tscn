@@ -20,13 +20,16 @@ func _ready() -> void:
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
-	get_child(2).text = str(1/delta)
+	get_child(3).text = str(1/delta)
 
 func _update_score() -> void:
 	get_child(0).text = \"Score:%s\" % str(roundi(Global.score))
 
 func _update_health() -> void:
 	get_child(1).text = \"Health:%s\" % str(maxi(0,Global.player_health))
+
+func _update_bombs() -> void:
+	get_child(2).text = \"Bombs: %s\" % str(Global.max_bombs-Global.bombs_used)
 "
 
 [node name="UI" type="Panel"]
@@ -70,6 +73,22 @@ vertical_alignment = 2
 clip_text = true
 text_overrun_behavior = 1
 
+[node name="Bombs" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.1
+anchor_top = 0.32
+anchor_right = 0.9
+anchor_bottom = 0.4
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_font_sizes/font_size = 52
+text = "Bombs: 3"
+horizontal_alignment = 1
+vertical_alignment = 2
+clip_text = true
+text_overrun_behavior = 1
+
 [node name="FPS" type="Label" parent="."]
 layout_mode = 1
 anchors_preset = -1
@@ -81,7 +100,6 @@ offset_left = -5.76001
 offset_top = 4.10077
 offset_right = -5.76001
 offset_bottom = 4.10077
-grow_horizontal = 0
 grow_vertical = 0
 theme_override_font_sizes/font_size = 56
 text = "144"
