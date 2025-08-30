@@ -74,17 +74,7 @@ func _process(delta: float) -> void:
 		if Input.is_action_pressed("fire"):
 			_fire()
 	
-	
-	#Keeps the player in bounds
-	if(position.x-collision_size_x < 0):
-		position.x = collision_size_x
-	elif(position.x+collision_size_x > Global.screen_bounds[0]):
-		position.x = Global.screen_bounds[0]-collision_size_x
-	if(position.y-collision_size_y < 0):
-		position.y = collision_size_y
-	elif(position.y+collision_size_y > Global.screen_bounds[1]):
-		position.y = Global.screen_bounds[1]-collision_size_y
-	
+	_keep_in_bounds()
 	
 	#Fire rate and bomb rate limit
 	if(fire_cooldown > 0):
@@ -108,6 +98,17 @@ func _process(delta: float) -> void:
 				get_parent().move_child(get_parent().get_child(get_parent().get_child_count()-1), 0)
 				queue_free()
 
+
+func _keep_in_bounds() -> void: #Keeps the player in bounds
+	if(position.x-collision_size_x < 0):
+		position.x = collision_size_x
+	elif(position.x+collision_size_x > Global.screen_bounds[0]):
+		position.x = Global.screen_bounds[0]-collision_size_x
+	if(position.y-collision_size_y < 0):
+		position.y = collision_size_y
+	elif(position.y+collision_size_y > Global.screen_bounds[1]):
+		position.y = Global.screen_bounds[1]-collision_size_y
+
 func _unhandled_input(event): #Handling movement, fire, and switch controls
 	if(swap_timer <= 0):
 		if event is InputEventKey: 
@@ -124,8 +125,12 @@ func _unhandled_input(event): #Handling movement, fire, and switch controls
 						add_sibling(Global.player_chars[Global.player_char_index].new(position.x, position.y, null, true, swap_start_x, swap_start_y))
 						queue_free()
 	if event is InputEventKey:
-		if event.pressed and event.keycode == KEY_C:
+		if event.pressed and event.keycode == KEY_Z:
 			_bomb(0)
+		if event.pressed and event.keycode == KEY_X:
+			_bomb(1)
+		if event.pressed and event.keycode == KEY_C:
+			_bomb(2)
 
 
 func _fire():

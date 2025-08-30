@@ -1,8 +1,4 @@
 res://Scenes/UI.tscn
 res://Assets/CharacterSprites/SpriteFrames/TestFrames.tres
 res://Scripts/GameEntity.gd
-res://Scripts/SpecificInstances/Enemies/TestEnemy.gd
-res://Scenes/Master.tscn
-res://Scenes/Menu.tscn
-res://Scenes/Playfield.tscn
-res://Scripts/Global.gd
+res://Scripts/PlayerEntity.gd

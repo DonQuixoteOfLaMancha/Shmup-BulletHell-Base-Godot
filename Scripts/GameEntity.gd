@@ -130,54 +130,65 @@ func _ready() -> void: #override this for zeke projectiles to have randomised sp
 func _process(delta: float) -> void:
 	#Dev-tool stuff
 	if(Engine.is_editor_hint()):
-		get_child(1).visible = show_bounds
-		get_child(2).visible = show_trajectory
-		
-		if(show_bounds):
-			get_child(1).points[0] = Vector2(-editor_collision_horizontal, -editor_collision_vertical)
-			get_child(1).points[1] = Vector2(editor_collision_horizontal, -editor_collision_vertical)
-			get_child(1).points[2] = Vector2(editor_collision_horizontal, editor_collision_vertical)
-			get_child(1).points[3] = Vector2(-editor_collision_horizontal, editor_collision_vertical)
-		if(show_trajectory):
-			get_child(2).clear_points()
-			var traj_pos_x : float = 0+dev_initial_pos.x-position.x
-			var traj_pos_y : float = 0+dev_initial_pos.y-position.y
-			var traj_vel_x : float = editor_initial_velocity_x
-			var traj_vel_y : float = editor_initial_velocity_y
-			for traj_index in range(0,trajectory_steps+1):
-				get_child(2).add_point(Vector2(traj_pos_x, traj_pos_y))
-				traj_pos_x += traj_vel_x+0.5*editor_acceleration_x
-				traj_pos_y += traj_vel_y+0.5*editor_acceleration_y
-				traj_vel_x += editor_acceleration_x
-				traj_vel_y += editor_acceleration_y
-		if(follow_trajectory):
-			if(!follow_traj_previous_state):
-				dev_initial_pos = position
-			position.x = dev_initial_pos.x+dev_traj_timer*(editor_initial_velocity_x+0.5*dev_traj_timer*editor_acceleration_x)
-			position.y = dev_initial_pos.y+dev_traj_timer*(editor_initial_velocity_y+0.5*dev_traj_timer*editor_acceleration_y)
-			dev_traj_timer += delta
-			if(dev_traj_timer > trajectory_steps):
-				position = dev_initial_pos
-				dev_traj_timer = 0
-		elif(follow_traj_previous_state):
-			position = dev_initial_pos
-			dev_traj_timer = 0
-		else:
-			dev_initial_pos = position
-			dev_traj_timer = 0
-		follow_traj_previous_state = follow_trajectory
-		return
+		_dev_tools(delta)
 	
 	
 	#Actual game stuff
-	#Movement over time
+	_movement(delta)
+	
+	_despawn_check(delta)
+	
+	_lifetime_update(delta)
+	
+	_auto_fire(delta)
+
+
+func _dev_tools(delta : float) -> void: #General dev tool stuff, for figuring stuff out in editor
+	get_child(1).visible = show_bounds
+	get_child(2).visible = show_trajectory
+	
+	if(show_bounds):
+		get_child(1).points[0] = Vector2(-editor_collision_horizontal, -editor_collision_vertical)
+		get_child(1).points[1] = Vector2(editor_collision_horizontal, -editor_collision_vertical)
+		get_child(1).points[2] = Vector2(editor_collision_horizontal, editor_collision_vertical)
+		get_child(1).points[3] = Vector2(-editor_collision_horizontal, editor_collision_vertical)
+	if(show_trajectory):
+		get_child(2).clear_points()
+		var traj_pos_x : float = 0+dev_initial_pos.x-position.x
+		var traj_pos_y : float = 0+dev_initial_pos.y-position.y
+		var traj_vel_x : float = editor_initial_velocity_x
+		var traj_vel_y : float = editor_initial_velocity_y
+		for traj_index in range(0,trajectory_steps+1):
+			get_child(2).add_point(Vector2(traj_pos_x, traj_pos_y))
+			traj_pos_x += traj_vel_x+0.5*editor_acceleration_x
+			traj_pos_y += traj_vel_y+0.5*editor_acceleration_y
+			traj_vel_x += editor_acceleration_x
+			traj_vel_y += editor_acceleration_y
+	if(follow_trajectory):
+		if(!follow_traj_previous_state):
+			dev_initial_pos = position
+		position.x = dev_initial_pos.x+dev_traj_timer*(editor_initial_velocity_x+0.5*dev_traj_timer*editor_acceleration_x)
+		position.y = dev_initial_pos.y+dev_traj_timer*(editor_initial_velocity_y+0.5*dev_traj_timer*editor_acceleration_y)
+		dev_traj_timer += delta
+		if(dev_traj_timer > trajectory_steps):
+			position = dev_initial_pos
+			dev_traj_timer = 0
+	elif(follow_traj_previous_state):
+		position = dev_initial_pos
+		dev_traj_timer = 0
+	else:
+		dev_initial_pos = position
+		dev_traj_timer = 0
+	follow_traj_previous_state = follow_trajectory
+	return
+
+func _movement(delta : float) -> void: #Movement over time
 	position.x += delta*(velocity_x+0.5*delta*acceleration_x)
 	position.y += delta*(velocity_y+0.5*delta*acceleration_y)
 	velocity_x += delta*acceleration_x
 	velocity_y += delta*acceleration_y
-	
-	
-	#Despawning after too long out of bounds
+
+func _despawn_check(delta : float) -> void: #Despawning after too long out of bounds
 	if(position.x+collision_size_x < 0 or position.x-collision_size_x > Global.screen_bounds[0] #Checks if object is within horizontal bounds
 		or position.y+collision_size_y < -0.5*Global.screen_bounds[1] or position.y-collision_size_y > Global.screen_bounds[1]): #Checks if object is within vertical bounds, gives space above the visible area equal to 1/2 of the play area's height that is considered in bounds for spawning purposes
 			oob_time_passed += delta
@@ -187,15 +198,14 @@ func _process(delta: float) -> void:
 				queue_free()
 	else:
 		oob_time_passed = 0.0
-	
-	#Despawning after lifespan timer runs out
+
+func _lifetime_update(delta : float) -> void: #Despawning after lifespan timer runs out
 	if(lifetime > 0):
 		lifetime -= delta
 		if(lifetime < 0.5*delta):
 			queue_free()
-	
-	
-	#Firing bullets according to pattern
+
+func _auto_fire(delta : float) -> void: #Firing bullets according to pattern
 	if(fire_pattern.size() > 0 and fire_cooldowns.size() > 0 #checks there actually is any firing pattern
 		and firing_index < fire_pattern.size() and firing_index < fire_cooldowns.size()): #checks that the index is in range (it will go out of range if runs out of loops)
 		if(fire_pattern[firing_index] != null):
@@ -231,6 +241,9 @@ func _process(delta: float) -> void:
 					if(fire_loop_count > 0): #decrements amount of loops left if limited
 						fire_loop_count -= 1
 					firing_index = 0
+
+
+
 
 
 #Taking damage
